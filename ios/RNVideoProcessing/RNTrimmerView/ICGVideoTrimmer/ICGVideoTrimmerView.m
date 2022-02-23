@@ -125,8 +125,8 @@
     [self.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
     
     self.scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.frame), CGRectGetHeight(self.frame) - self.trackerHandleHeight)];
-    [self.scrollView setBounces:NO];
-    [self.scrollView setScrollEnabled:NO];
+    [self.scrollView setBounces:YES];
+    [self.scrollView setScrollEnabled:YES];
     [self addSubview:self.scrollView];
     [self.scrollView setDelegate:self];
     [self.scrollView setShowsHorizontalScrollIndicator:NO];
