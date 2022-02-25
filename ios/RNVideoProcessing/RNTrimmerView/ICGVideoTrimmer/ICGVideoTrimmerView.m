@@ -38,6 +38,7 @@
 @property (nonatomic) CGPoint leftStartPoint;
 @property (nonatomic) CGPoint rightStartPoint;
 @property (nonatomic) CGFloat overlayWidth;
+@property (nonatomic) CGFloat prevTrackerTime;
 
 @end
 
@@ -116,7 +117,7 @@
 
 - (void)resetSubviews
 {
-    //    self.clipsToBounds = YES;
+    self.clipsToBounds = YES;
     
     self.trackerHandleHeight = 20;
     
@@ -137,7 +138,7 @@
     
     CGFloat ratio = self.showsRulerView ? 0.7 : 1.0;
     self.frameView = [[UIView alloc] initWithFrame:CGRectMake(self.thumbWidth, 0, CGRectGetWidth(self.contentView.frame)-2*self.thumbWidth, CGRectGetHeight(self.contentView.frame)*ratio)];
-    //[self.frameView.layer setMasksToBounds:YES];
+    [self.frameView.layer setMasksToBounds:YES];
     [self.contentView addSubview:self.frameView];
     
     [self addFrames];
@@ -181,7 +182,7 @@
     [self.trackerHandle.layer setCornerRadius:10];
     self.tracker.backgroundColor = self.trackerColor;
     self.trackerHandle.backgroundColor = self.trackerHandleColor;
-    //    self.trackerView.layer.masksToBounds = true;
+    self.trackerView.layer.masksToBounds = true;
     self.tracker.layer.cornerRadius = 2;
     
     
@@ -199,7 +200,7 @@
     [self.panGestureRecognizer locationInView: self.trackerView];
     
     [self.trackerView addGestureRecognizer:self.panGestureRecognizer];
-    //    [self.trackerHandle addGestureRecognizer:self.panGestureRecognizer];
+//        [self.trackerHandle addGestureRecognizer:self.panGestureRecognizer];
     
     
     [self.leftThumbView.layer setMasksToBounds:YES];
@@ -259,11 +260,11 @@
         {
             CGPoint point = [gesture locationInView:self];
             
-            int deltaX = point.x - self.leftStartPoint.x;
+            CGFloat deltaX = point.x - self.leftStartPoint.x;
             
             CGPoint center = self.leftOverlayView.center;
-            
-            CGFloat newLeftViewMidX = center.x += deltaX;;
+            center.x += deltaX;
+            CGFloat newLeftViewMidX = center.x;
             CGFloat maxWidth = CGRectGetMinX(self.rightOverlayView.frame) - (self.minLength * self.widthPerSecond);
             CGFloat newLeftViewMinX = newLeftViewMidX - self.overlayWidth/2;
             if (newLeftViewMinX < self.thumbWidth - self.overlayWidth) {
@@ -325,12 +326,23 @@
 
 - (void)seekToTime:(CGFloat) time
 {
-    CGFloat posToMove = time * self.widthPerSecond + self.thumbWidth - self.scrollView.contentOffset.x - self.trackerHandleHeight;
-    
+    BOOL animate = (fabs(_prevTrackerTime - time) > 1) ?  NO : YES;
+    _prevTrackerTime = time;
+
+
+    CGFloat posToMove = time * self.widthPerSecond + self.thumbWidth - self.scrollView.contentOffset.x;
+
     CGRect trackerFrame = self.trackerView.frame;
     trackerFrame.origin.x = posToMove;
-    self.trackerView.frame = trackerFrame;
-    
+    if (animate){
+        [UIView animateWithDuration:.1 animations:^{
+            self.trackerView.frame = trackerFrame;
+        }];
+    }
+    else{
+        self.trackerView.frame = trackerFrame;
+    }
+
 }
 
 - (void)hideTracker:(BOOL)flag
@@ -384,14 +396,15 @@
     Float64 duration = CMTimeGetSeconds([self.asset duration]);
     CGFloat screenWidth = CGRectGetWidth(self.frame) - 2*self.thumbWidth; // quick fix to make up for the width of thumb views
     NSInteger actualFramesNeeded;
-    
-    CGFloat frameViewFrameWidth = (duration / self.maxLength) * screenWidth;
+    CGFloat factor = (duration / self.maxLength);
+    factor = (factor < 1 ? 1 : factor);
+    CGFloat frameViewFrameWidth = factor * screenWidth;
     [self.frameView setFrame:CGRectMake(self.thumbWidth, 0, frameViewFrameWidth, CGRectGetHeight(self.frameView.frame))];
     CGFloat contentViewFrameWidth = CMTimeGetSeconds([self.asset duration]) <= self.maxLength + 0.5 ? screenWidth + 30 : frameViewFrameWidth;
     [self.contentView setFrame:CGRectMake(0, 0, contentViewFrameWidth, CGRectGetHeight(self.contentView.frame))];
     [self.scrollView setContentSize:self.contentView.frame.size];
     NSInteger minFramesNeeded = screenWidth / picWidth + 1;
-    actualFramesNeeded =  (duration / self.maxLength) * minFramesNeeded + 1;
+    actualFramesNeeded = factor * minFramesNeeded + 1;
     
     Float64 durationPerFrame = duration / (actualFramesNeeded*1.0);
     self.widthPerSecond = frameViewFrameWidth / duration;
