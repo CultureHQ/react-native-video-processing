@@ -190,7 +190,7 @@ public class Trimmer {
 
       float aspectRatio = (float)width / (float)height;
 
-      int resizeWidth = 200;
+      int resizeWidth = 500;
       int resizeHeight = Math.round(resizeWidth / aspectRatio);
 
       float scaleWidth = ((float) resizeWidth) / width;
