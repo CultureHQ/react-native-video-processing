@@ -52,7 +52,8 @@
     "babel-preset-react": "^6.24.1",
     "babel-preset-react-native": "^4.0.0",
     "babel-preset-react-native-stage-0": "1.0.1",
-    "lodash": "^4.16.6"
+    "lodash": "^4.16.6",
+    "rn-range-slider": "2.1.1"
   },
   "devDependencies": {
     "babel-eslint": "8.0.1",
