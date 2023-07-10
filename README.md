@@ -26,8 +26,8 @@ yarn add react-native-video-processing
 pod 'GPUImage', git: 'https://github.com/BunHouth/GPUImage.git'
 ```
 
-**SKIP THE BELOW INSTURCTIONS RN > 0.60**
---**START**--
+**SKIP ALL THE BELOW INSTURCTIONS RN > 0.60**
+
 **Note: For RN 0.4x use 1.0 version, for RN 0.3x use 0.16**
 
 #### [Android]
@@ -98,7 +98,7 @@ project(':react-native-video-processing').projectDir = new File(rootProject.proj
 4. Compile binaries: `./android.sh --lts --disable-arm-v7a-neon --enable-x264 --enable-gpl --speed`. The command might finish with `failed`. That's okay because we modified the build script. Make sure every build outputs: `ffmpeg: ok`.
 5. Find `ffmpeg` binaries in `prebuilt/[android-arm|android-arm64|android-x86|android-x86_64]/ffmpeg/bin/ffmpeg`
 6. Copy and rename binaries to `android/src/main/jniLibs/[armeabi-v7a|arm64-v8a|x86|x86_64]/libffmpeg.so`. Make sure you rename the binaries from `ffmpeg` to `libffmpeg.so`!
---**END**--
+
 ## Example Usage
 
 ```javascript
