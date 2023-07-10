@@ -26,7 +26,7 @@ yarn add react-native-video-processing
 pod 'GPUImage', git: 'https://github.com/BunHouth/GPUImage.git'
 ```
 
-**SKIP ALL THE BELOW INSTURCTIONS RN > 0.60**
+**SKIP ALL THE BELOW INSTURCTIONS RN 0.60+**
 
 **Note: For RN 0.4x use 1.0 version, for RN 0.3x use 0.16**
 
