@@ -26,6 +26,8 @@ yarn add react-native-video-processing
 pod 'GPUImage', git: 'https://github.com/BunHouth/GPUImage.git'
 ```
 
+**SKIP THE BELOW INSTURCTIONS RN > 0.60**
+--**START**--
 **Note: For RN 0.4x use 1.0 version, for RN 0.3x use 0.16**
 
 #### [Android]
@@ -96,7 +98,7 @@ project(':react-native-video-processing').projectDir = new File(rootProject.proj
 4. Compile binaries: `./android.sh --lts --disable-arm-v7a-neon --enable-x264 --enable-gpl --speed`. The command might finish with `failed`. That's okay because we modified the build script. Make sure every build outputs: `ffmpeg: ok`.
 5. Find `ffmpeg` binaries in `prebuilt/[android-arm|android-arm64|android-x86|android-x86_64]/ffmpeg/bin/ffmpeg`
 6. Copy and rename binaries to `android/src/main/jniLibs/[armeabi-v7a|arm64-v8a|x86|x86_64]/libffmpeg.so`. Make sure you rename the binaries from `ffmpeg` to `libffmpeg.so`!
-
+--**END**--
 ## Example Usage
 
 ```javascript
@@ -213,21 +215,3 @@ export class App extends Component {
 }
 ```
 
-##
-If this project was helpful to you, please <html>
- <a href="https://www.buymeacoffee.com/FnENSxi" target="_blank"><img src="https://bmc-cdn.nyc3.digitaloceanspaces.com/BMC-button-images/custom_images/yellow_img.png" alt="Buy Me A Coffee" style="height: auto !important;width: auto;" ></a>
- </html>
-
-## Contributing
-
-1. Please follow the eslint style guide.
-2. Please commit with `$ npm run commit`
-
-## Roadmap
-1.  [ ] Use FFMpeg instead of MP4Parser
-2.  [ ] Add ability to add GLSL filters
-3.  [x] Android should be able to compress video
-4.  [x] More processing options
-5.  [ ] Create native trimmer component for Android
-6.  [x] Provide Standalone API
-7.  [ ] Describe API methods with parameters in README
