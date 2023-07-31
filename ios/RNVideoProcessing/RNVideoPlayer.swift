@@ -239,6 +239,7 @@ class RNVideoPlayer: RCTView {
                 return
             }
             print("CHANGED play \(val)")
+            playerItem.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.status), options: .new, context: nil)
             if val == 1 && player.rate == 0.0 {
                 player.play()
             } else if val == 0 && player.rate != 0.0 {
@@ -248,6 +249,50 @@ class RNVideoPlayer: RCTView {
         get {
             return nil
         }
+    }
+
+  // Observe the status change of AVPlayerItem
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        if keyPath == #keyPath(AVPlayerItem.status) {
+            if let playerItem = object as? AVPlayerItem {
+                if playerItem.status == .readyToPlay {
+                    // Once the player item is ready to play, get the video orientation
+                    let _ = getVideoOrientation(from: playerItem)
+                }
+            }
+        }
+    }
+    
+    func getVideoOrientation(from playerItem: AVPlayerItem) -> UIInterfaceOrientation {
+        guard let videoTrack = playerItem.asset.tracks(withMediaType: .video).first else {
+            return .unknown
+        }
+        let transform = videoTrack.preferredTransform
+        let videoAngle = atan2(transform.b, transform.a)
+        let degrees = videoAngle * CGFloat(180) / CGFloat.pi
+        var orientation: UIInterfaceOrientation
+        switch degrees {
+        case 0:
+            orientation = .portrait
+        case 90:
+            orientation = .landscapeRight
+            var rotationAngle: CGFloat = 0
+            //filterView.frame.size.width = self._playerHeight
+            //filterView.frame.size.height = self._playerWidth
+            //filterView.bounds.size.width = self._playerWidth
+            //filterView.bounds.size.height = self._playerWidth
+            rotationAngle = CGFloat.pi / 2
+            //filterView.frame.origin = CGPoint.zero
+            self.filterView.transform = CGAffineTransform(rotationAngle: rotationAngle)
+            //playerLayer?.frame = filterView.bounds
+            //self.setNeedsLayout()
+            //self.layoutIfNeeded()
+        case -90:
+            orientation = .landscapeLeft
+        default:
+            orientation = .unknown
+        }
+        return orientation
     }
 
     var replay: NSNumber? {
